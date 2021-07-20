@@ -33,8 +33,8 @@
 
 ---
 
-#### 1) 등록 페이지 만들기
-<hr>
+## 1) 등록 페이지 만들기
+
 
 
    __개념 : form 태그__
@@ -100,7 +100,7 @@ __튜토리얼 : 3. 확인하기__
 
 ---
 
-#### 2) 폼데이터 주고 받기 
+## 2) 폼데이터 주고 받기 
 
 
 #### 미션
@@ -288,7 +288,7 @@ __⭐️ 결과 확인__
       문제 발생 까지의 상황을 데이터로 기록하는 것이다. 이를 분석하여
       문제 발생 원인과, 그 해결책을 마련할 수 있다.
 
-#### 3) 폼(form) 데이터, Ajax로 주고 받기
+## 3) 폼(form) 데이터, Ajax로 주고 받기
 #### 미션
 
 폼 데이터를 Ajax 방식으로 서버에 전달하여,
@@ -299,4 +299,157 @@ __⭐️ 결과 확인__
 
 __⭐️ Ajax 무엇, 왜씀?__
 
-JS
+JS를 사용한 비동기적 통신 기법. 이를 Ajax라 한다. Ajax를 사용하면,
+ 신속한 데이터 변경이 가능하다. 가령 1만줄짜리 웹페이지 중, 단 한 데이터가
+ 바뀌는 상황이라 하자. Ajax를 사용하면, 정확히 해당 데이터만 바꿀 수 있다.
+ 반면, 일반 웹페이지 요청은 전체 페이지를 읽는 낭비가 발생한다.
+
+__⭐️ JSON__
+
+Ajax 통신 시, 데이터는 JSON 형식으로 주고 받게 된다.
+JSON(JavaScript Object Notation)이란, 데이터를 자바스크립트 객체로 표현한 것이다.
+
+```javascript
+// article 객체 표현 예
+{
+    author: "송우기",
+    title: "오늘은...",
+    content: "치킨을 뜯고 싶어라..!"
+}
+```
+__⭐️ API 컨트롤러__
+
+서버 데이터를 JSON에 담아 API로 주고 받는 컨트롤러. 이를 API 컨트롤러, 다른 표현으로 REST 컨트롤러라 한다.
+이를 위한 어노테이션이 @RestController이다.
+
+#### 개념
+
+__⭐️ 뷰 페이지__
+
+1) 페이지 수정 : "articles/new"
+```html
+{{>layouts/header}}
+<div class="jumbotron">
+    <h1>Article 등록</h1>
+    <hr>
+    <p>articles/new.mustache</p>
+</div>
+<!-- Form 태그,
+    기존 속성 method와 action을 삭제!
+    왜? JS로 보낼거니까!
+-->
+<form class="container">
+    <div class="form-group">
+        <label for="author">작성자</label>
+        <!-- name="author" 추가, DTO의 필드명과 일치해야함! -->
+        <input name="author" type="text" class="form-control" id="article-author" placeholder="작성자를 입력하세요">
+    </div>
+    <div class="form-group">
+        <label for="title">제목</label>
+        <!-- name="title" 추가, DTO의 필드명과 일치해야함! -->
+        <input name="title" type="text" class="form-control" id="article-title" placeholder="제목을 입력하세요">
+    </div>
+
+    <div class="form-group">
+        <label for="content">내용</label>
+        <!-- name="content" 추가, DTO의 필드명과 일치해야 함! -->
+        <textarea name="content" class="form-control" id="article-content" placeholder="내용을 입력하세요" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="article-create-btn">제출</button>
+
+</form>
+<script>
+    //++++++++++++++++++++++++++
+    // article 객체 생성
+    //++++++++++++++++++++++++++
+    var article = {
+
+        //----------------------
+        // 초기화(이벤트 등록) 메소드
+        //----------------------
+        init: function (){
+
+            //----------------------
+            // 스코프 충돌 방지!
+            //----------------------
+            var _this = this;
+
+            //----------------------
+            // 생성 버튼 선택
+            //----------------------
+            const createBtn = document.querySelector('#article-create-btn');
+
+            //----------------------
+            // 생성 버튼 클릭 시, 동작 할 메소드 연결
+            //----------------------
+            createBtn.addEventListener('click',_this.create);
+        }
+
+        //----------------------
+        // article 생성 메소드
+        //----------------------
+        ,create: function (){
+
+            //----------------------
+            // form 데이터를 JSON으로 만듦
+            //----------------------
+            var data = {
+                author: document.querySelector('#article-author').value,
+                title: document.querySelector('#article-title').value,
+                content: document.querySelector('#article-content').value,
+            }
+
+            //----------------------
+            // 데이터 생성 요청을 보냄
+            // fetch(URL, HTTP_REQUEST
+            //----------------------
+            fetch('/api/articles',{
+                method:'POST', // POST 방식으로, HTTP 요청.
+                body:JSON.stringify(data), // 위에서 만든 폼 데이터(data)를 함꼐 보냄.
+                headers:{'Content-Type':'application/json'}
+            }).then(function (response){ // 응답 처리!
+
+                //----------------------
+                // 요청 성공!
+                //----------------------
+                if(response.ok){
+                    alert('게시글이 작성되었습니다.');
+                    window.location.href='/articles'; // 해당 URL로 브라우저를 새로고침!
+                }else{ // 요청 실패..
+                    alert('게시글 작성에 문제가 생겼습니다.');
+                }
+            })
+        }
+    }
+    //----------------------
+    // 객체 초기화
+    //----------------------
+    article.init();
+
+</script>
+
+{{>layouts/footer}}
+```
+
+__⭐️ 뷰 페이지__
+
+2) 생성: "api/ArticleApiController"
+
+```java
+@Slf4j
+@RestController
+public class ArticleApiController {
+
+    @PostMapping("/api/articles")// Post 요청이 "/api/articles" url로 온다면, 메소드 수행!
+    public Long create(@RequestBody ArticleForm form){ // JSON 데이터를 받아옴!
+        log.info(form.toString()); // 받아온 데이터 확인!
+        return 0L;
+    }
+}
+```
+
+
+__⭐️ 확인하기__
+
+3) 데이터 보내기
