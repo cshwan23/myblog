@@ -30,9 +30,10 @@
 ## 게시판 만들기
    
 ### 1. 데이터 등록(create)
-   
-<span style="color:#348feb">1) 등록 페이지 만들기</span>
 
+---
+
+#### <mark>1) 등록 페이지 만들기</mark>
 
 
    __개념 : form 태그__
@@ -95,4 +96,43 @@ public class ArticleController {
 
 __튜토리얼 : 3. 확인하기__
 3) 브라우저 접속 : "localhost:8080/articles/new"
-   
+
+---
+
+#### 2) 폼데이터 주고 받기 
+
+## 폼데이터 주고 받기
+
+### 미션
+
+---
+데이터 전송 미션! 폼 태그 제출(submit)하고,
+그 값을 확인하시오.
+
+### 개념
+
+---
+__⭐️ HTTP 프로토콜 리뷰__
+
+* GET : 데이터 조회 요청
+* POST : 데이터 생성 요청
+* PUT/PATCH : 데이터 수정 요청
+* DELETE : 데이터 삭제 요청
+
+__⭐️ form 태그 주요 속성__
+
+데이터 전송을 위한 form 태그. 주요 속성은 "method"와 "action"이다.
+
+```html
+<!-- method : HTTP의 요청 방식을 결정. get/post 가능 -->
+<!-- action : 데이터가 전송될 도착지 URL -->
+<form method="post", action="/articles">
+   ...
+</form>
+```
+
+__⭐️ DTO__
+
+폼 데이터를 서버에서 사용하려면, 객체로 만들어야 한다. 이를 위해 DTO(Data Transfer Object)가 필요하다.
+
+__⭐️ 데이터 로그 남기기__  
