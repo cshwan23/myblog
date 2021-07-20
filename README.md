@@ -322,7 +322,7 @@ __⭐️ API 컨트롤러__
 서버 데이터를 JSON에 담아 API로 주고 받는 컨트롤러. 이를 API 컨트롤러, 다른 표현으로 REST 컨트롤러라 한다.
 이를 위한 어노테이션이 @RestController이다.
 
-#### 개념
+#### 튜토리얼
 
 __⭐️ 뷰 페이지__
 
@@ -453,3 +453,169 @@ public class ArticleApiController {
 __⭐️ 확인하기__
 
 3) 데이터 보내기
+
+
+## 4) JPA 리파지터리, 데이터 저장하기
+
+### 미션
+
+Article을 작성하고, 이를 제출!
+
+그 결과를, 데이터베이스로 확인하시오.
+
+
+### 개념
+
+__⭐️ JPA와 리파지터리__
+
+데이터를 저장하려면 DB에 넘겨야 한다. 그런데, 직접 데이터를 넘기기가 쉽지 않다.
+서로 사용하는 언어가 다르기 때문이다. 이를 위한 라이브러리가 JPA이다.
+JPA는 DB와의 소통을 보다 쉽게 한다. 그 핵심이 되는 인터페이스를 리파지터리
+라고 한다. 
+
+__⭐️ 엔티티 클래스__
+
+리파지터리가 DB와 데이터를 주고 받으려면, 알맞은 규격이 필요하다.
+편지를 보내려면 편지 봉투가 필요하듯. 이를 엔티티(entity)라 한다.
+
+__⭐️ DB 테이블과 레코드__
+
+DB는 데이터를 테이블(table)로 관리한다. 엑셀이라 생각하면 쉽다.
+리파지터리에서 엔티티 객체를 보내면, 이를 받아 테이블에 저장한다.
+이렇게 엔티티가 테이블로 저장된 것을 레코드(record)라 한다.
+
+__⭐️ SQL__
+
+DB는 데이터를 관리하는데, SQL 언어를 사용한다. SQL의 가장 기본 명령은
+4가지가 있다.
+
+    * select: 레코드 조회
+    * insert: 레코드 추가
+    * update: 레코드 수정
+    * delete: 레코드 삭제
+
+### 튜토리얼
+
+__⭐️ 최종 구조__
+
+* api
+    + ArticleApiController
+
+* dto
+    + ArticleForm
+
+* entity
+    + Article
+
+* repository
+    + ArticleRepository
+    
+- resource
+    * templates
+        + application.yaml
+
+
+__⭐️ 리파지터리__
+
+1) 인터페이스 생성: "repository/ArticleRepository"
+
+```java
+//DB와 소통하는 인터페이스, JPA가 해당 객체를 알아서 만듦!
+public interface ArticleRepository
+
+    // <Article, long> 의미? 관리 대상은 article, 대상의 PK는 Long타입!
+    extends CrudRepository<Article, Long>{ 
+    
+}
+```
+
+__⭐️ 엔티티 클래스__
+
+2) 생성: "entity/Article"
+```java
+
+@Getter // 게터를 자동 생성!
+@ToString // toString() 자동 생성!
+@NoArgsConstructor // 디폴트 생성자 넣어 줌!
+@Entity // DB 테이블에 저장될 클래스 임!
+public class Article {
+    
+    @ID // 이게 ID임! 즉 사람으로 따지면 주민등록 번호! DB 에서는 PK(Primary Key)라고 함!
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // DB에서 자동 관리. 매 생성 시, 1, 2, ... 증가
+    private Long id;
+
+    @Column(length = 10, nullable = false) // 최대 10글자, 비어있으면 안됨! 추후 SQL 학습
+    private String author;
+
+    @Column(length = 100, nullable = false) // 최대 100글자, 비어있으면 안됨! 추후 SQL 학습
+    private String title;
+
+    @Column(columnDefinition="TEXT", nullable = false) // 텍스트 타입, 비어있으면 안됨! 추후 SQL 학습
+    private String content;
+    
+    @Builder // 빌더 패턴 적용! 추후 설명...!
+    public Article(Long id, String author, String title, String content){
+        this.id = id;
+        this.author = author;
+        this.title = title;
+        this.content = content;
+    }    
+}
+
+```
+
+__⭐️ API 컨트롤러__
+
+3) 리파지터리에게 데이터를 저장하게 함: "api/ArticleApiController"
+
+```java
+
+@Slf4j
+@RestController
+public class ArticleApiController {
+    
+    @Autowired // 리파지토리 객체를 알아서 가져옴! 자바는 new ArticleRepository() 해야 했음!
+    private ArticleRepository articleRepository;
+    
+    @PostMapping("/api/articles") //Post 요청이 "/api/articles" url로 온다면, 메소드 수행!
+    public Long create(@RequestBody ArticleForm form){ // JSON 데이터를 받아옴!
+        
+        log.info(form.toString()); // 받아온 데이터 확인!
+        
+        // dto(데이터-전달-객체)를 entity(db-저장-객체)로 변경
+        Article article = form.toEntity();
+        
+        // 리파지터리에게(db-관리-객체) 전달
+        Article saved = articleRepository.save(article);
+        log.info(saved.toString());
+        
+        // 저장 엔티티의 id(PK)값 반환!
+        return saved.getId();
+        
+    }
+    
+}
+```
+
+__⭐️ DTO 클래스__
+
+4) 롬복 적용 및 메소드 추가: "dto/ArticleForm"
+
+```java
+
+@Data // 생성자(디폴트, All), 게터, 세터, toString 등 다 만들어 줌!
+public class ArticleForm{
+    
+    private String author;
+    private String title;
+    private String content;
+    
+    // 빌더 패턴으로 객체 생성! 생성자의 변형. 입력 순서가 일치하지 않아도 됨. 
+    public Article toEntity(){
+        return Article.builder().id(null).author(author).title(title).content(content).build();
+    }
+    
+}
+```
+
+
