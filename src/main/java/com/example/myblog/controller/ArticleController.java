@@ -17,5 +17,9 @@ public class ArticleController {
         return "articles/index";    // 뷰페이지 설정
         }
 
+    @GetMapping("/articles/new") // GET 요청이 해당 url로 오면, 아래 메소드를 수행!
+    public String newArticle(){
+        return "articles/new"; // 보여줄 뷰 페이지
+    }
 
 }
