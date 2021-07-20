@@ -31,7 +31,7 @@
    
 ### 1. 데이터 등록(create)
    
-#### <span style="color:#348feb">1) 등록 페이지 만들기</span>
+<span style="color:#348feb">1) 등록 페이지 만들기</span>
 
 
 
