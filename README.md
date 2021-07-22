@@ -612,10 +612,100 @@ public class ArticleForm{
     
     // 빌더 패턴으로 객체 생성! 생성자의 변형. 입력 순서가 일치하지 않아도 됨. 
     public Article toEntity(){
-        return Article.builder().id(null).author(author).title(title).content(content).build();
+        return Article.builder()
+                .id(null)
+                .author(author)
+                .title(title)
+                .content(content)
+                .build();
     }
     
 }
 ```
+
+__⭐️ 확인하기__
+
+5) Article 작성 : localhost:8080/articles/new
+
+
+6) 로그 확인 : ArticleForm(~,~)
+           : Article(id=1,~,~)
+   
+
+7) application.yaml 작성 : "application.properties를 변경"
+
+    //  h2 DB, 웹 콘솔 접근 허용
+
+    spring.h2.console.enabled = true
+
+8) h2 콘솔 확인
+
+서버 재시작 후 localhost:8080/h2-console 접속후
+
+JDBC URL: 여기 안에다가 'jdbc:h2:mem:주소' 를 적어준다.
+
+-> connect
+
+9) 데이터베이스 레코드 조회
+
+```h2
+select * from article;
+```
+
+10) 데이터베이스 레코드 추가
+```h2
+INSERT INTO article(author, title, content) values ( '장영실','나랑 안맞아','블라블라' );
+```
+
+11) 레코드 생성 확인
+
+
+## 면접 질문
+
++ DTO와 Entity를 나누는 이유?
+  
+    리파지토리가 db와 데이터를 주고받으려면, 알맞은 규격이 필요하다.
+
+
+  
++ JPA 리파지토리란 무엇이고 왜씀?
+  
+    데이터를 저장하려면 DB에 넘겨야 한다. 그런데 직접 데이터를 넘기기가 쉽지 않다. 
+    서로 사용하는 언어가 다르기 때문이다.
+    이를 위한 라이브러리가 JPA 이다. JPA 는 DB와의 소통을 보다 쉽게한다.
+    그 핵심이 되는 인터페이스를 리파지토리(repository)라 한다.
+  
+
++ 롬복의 장점?
+  
+    롬복이 있으면 굳이 길게 코딩을 안해도 된다. 생성자 게터세터, toString 다 만들어줌.
+
+  
++ @Autowired란?
+  
+    객체를 알아서 가져옴!
+    자바는 new 객체();를 해야함.
+  
+  
++ 데이터베이스 테이블과 레코드의 차이는?
+  
+    DB는 데이터를 테이블(table)로 관리한다. 엑셀. 
+    리파지토리에서 엔티티 객체를 보내면, 이를 받아 테이블에 저장한다.
+    이렇게 엔티티가 테이블로 저장된 것을 레코드라 한다.
+  
+  
++ SQL이란 무엇인가?
+
+    DB는 데이터를 관리하는데, SQL 언어를 사용한다. SQL의 가장 기본 명령은 4가지이다.
+- select : 레코드 조회
+- insert : 레코드 추가
+- update : 레코드 수정
+- delete : 레코드 삭제
+
+
+
+
+
+
 
 
