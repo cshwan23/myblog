@@ -939,6 +939,7 @@ public class ArticleController{
 
 그다음 컨트롤러로 가서 
 ```java
+@GetMapping("/articles/{id}")
 public String show(@PathVariable Long id){
     
         // @PathVariable 은 url 경로에 있는 주소의 {{템플릿변수}}를 받아오는 어노테이션이다.
