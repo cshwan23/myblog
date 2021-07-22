@@ -811,3 +811,159 @@ __⭐️ 뷰 페이지__
 + Iterable 인터페이스와 ArrayList 클래스의 관계?
 
     Iterable 인터페이스는 ArrayList의 부모 인터페이스
+
+## 6) 상세 페이지 보기
+
+## 미션
+
+###article 목록 페이지 상에서 제목을 클릭하면
+
+###해당 article의 상세 페이지가 나오게 하시오!
+
+## 개념
+
+__⭐️ 동작 흐름__
+
+1. localhost:8080/articles/1 -> Controller ->  Repository
+   
+2. Repository -> findById(id) -> DB ->
+
+3. DB -> Repository -> Controller
+
+4. Controller -> Model -> View
+
+5. View -> Client
+
+## 튜토리얼
+
+__⭐️ 생성 파일__
+
+- articles
+    + show.mustache
+
+__⭐️ 뷰 페이지__
+
+1) 링크 생성 및 내용 감추기 : "articles/index.mustache"
+
+```html
+{{>layouts/header}}
+...
+<!-- articles table -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>제목</th>
+            <th>작성자</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#articles}}
+        <tr>
+            <td>{{id}}</td>
+            <td>
+                <a href="/articles/{{id}}">{{title}}</a><!--링크 추가-->
+            </td>
+            <td>{{author}}</td>
+        </tr>
+        {{/articles}}
+    </tbody>
+</table>
+{{>layouts/footer}}
+```
+
+2) 상세 페이지 작성 : "articles/show.musthache"
+
+````html
+{{>layouts/header}}
+<!-- jumbotron -->
+<div class="jumbotron">
+    <h1>Article 상세보기</h1>
+    <hr>
+    <p>articles/show.mustache</p>
+</div>
+<!-- table -->
+<table class="table table-hover">
+    <tbody>
+        {{#articles}}
+        <tr>
+            <th>글번호</th>
+            <th>{{id}}</th>
+        </tr>
+        <tr>
+            <th>작성자</th>
+            <th>{{author}}</th>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <th>{{title}}</th>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <th>{{content}}</th>
+        </tr>
+        {{/articles}}
+    </tbody>
+</table>
+<a href="/articles" class="btn btn-success btn-block">목록으로</a>
+{{>layouts/footer}}
+````
+
+
+__⭐️ 컨트롤러__
+
+1) 메소드 추가 : "controller/ArticleController"
+
+```java
+...
+public class ArticleController{
+    ...
+    @GetMapping("/articles/{id}")
+    public String show(@PathVariable Long id, // url의 {id}값을 변수화!
+                        Model model){  
+        // id를 통해 Article을 가져옴!
+        Article article = articleRepository.findById(id).orElse(null);
+        
+        // article을 뷰 페이지로 전달
+        model.addAttribute("article", article);
+        
+        return "articles/show";
+    }
+}
+```
+
+## 튜토리얼 설명
+목록 페이지에서 
+목록 제목에 링크를 걸고 클릭했을 때 경로를 /articles/{{id}} 로 해준다.
+{{#articles}}{{/articles}}에 감싼 상태이면 id 를 받아서 경로에 집어넣어서{{변수}}화해서 내보낼 수 있다.
+
+그다음 컨트롤러로 가서 
+```java
+public String show(@PathVariable Long id){
+    
+        // @PathVariable 은 url 경로에 있는 주소의 {{템플릿변수}}를 받아오는 어노테이션이다.
+        // 이걸 id로 받아와서
+        // id로 repository에서 찾아서 그안의 모든 정보들을article 형태로 담는다.
+        Article article = articleRepository.findById(id).orElse(null) 
+        
+        // 그걸 모델에 담는다.
+        model.addAttribute("article", article);
+        
+        // 그걸 상세페이지에 보낸다.
+        return "/articles/show";
+        
+    
+        
+        
+}
+```
+그런다음 상세 페이지에서 받아온 article을 하나하나 보여준다. 
+
+
+
+
+
+
+
+
+
