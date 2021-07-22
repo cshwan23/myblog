@@ -5,9 +5,7 @@ import com.example.myblog.entity.Article;
 import com.example.myblog.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -29,8 +27,16 @@ public class ArticleApiController {
 
         // 저장 엔티티의 id(pk)값 반환!
         return saved.getId();
-
     }
+//
+//    @GetMapping("/api/articles/{id}")
+//    public ArticleForm getArticle(@PathVariable Long id){
+//        Article entity = articleRepository.findById(id).orElseThrow(
+//                ()->new IllegalArgumentException("해당 Article이 없습니다.")
+//        );
+//
+//        return new ArticleForm(entity);
+//    }
 
 
 }

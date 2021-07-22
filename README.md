@@ -960,6 +960,91 @@ public String show(@PathVariable Long id){
 ```
 그런다음 상세 페이지에서 받아온 article을 하나하나 보여준다. 
 
+## 7) JSON API, 데이터 가져오기
+
+## 미션
+
+Article 객체를 JSON API로 얻게 하시오.
+
+## 개념
+
+__⭐️ 진행 흐름__
+
+1. /api/articles/1 -> Controller -> Repository
+
+2. Repository -> findById(id) -> Record 
+
+3. Record -> Entity -> Repository -> Controller
+
+4. Controller -> DTO -> web client
+
+__⭐️ JSON API 왜씀?__
+
+API 형식으로 데이터를 받을 때, JSON을 사용한다. 왜그럴까? 장점이 있기 때문이다.
+어떤 장점? 바로 범용성이다.
+
+클라이언트는 사실 수도 없다. 웹기반의 브라우저, 앱 기반의 스마트폰, IoT 등... 수도 없다.
+수 많은 클라이언트 별. 맞춤 뷰 페이지를 만드는 것은 어렵다. 이를 해결하는 방법이 역할 분담이다. 
+서버는 데이터만 전달하고, 클라이언트는 이를 받아 화면에 보여주기로 하는 것이다.
+이때 데이터는 JSON으로 나타낸다. 잠정적 표준이다.
+
+__⭐️ DTO와 Entity는 굳이 왜 나눠야 할까?__
+
+비즈니스의 데이터를 담고있는 Entity. 이는 쉽게 변하지 않는다. 
+그러나 화면에서 보여주는 데이터는 수시로 변한다. 
+따라서, 이를 구분하여 만드는 것이 더 효율적이다.
+
+Entity가 식재료라면, DTO는 어느정도 개별 조리가 된 음식이랄까? 
+이를 최정족으로 플레이팅 하는 건, 클라이언트의 영역이다.
+
+
+## 튜토리얼 
+
+__⭐️ API 컨트롤러__
+
+1) 메소드 추가 : "api/ArticleApiController"
+
+```java
+@Slf4j
+@RestController
+public class ArticleController {
+    ...
+    
+    @GetMapping("/api/articles/{id}")
+    public ArticleForm getArticle(@PathVariable Long id){
+        Article entity = articleRepository.findById(id) // id로 article을 가져옴
+        .orElseThrow(//만약에 없다면,
+                ()-> new IllegalArgumentException('해당 Article이 없습니다.') //에러 던짐!
+        );
+        
+        // article을 form으로 변경! 궁극적으로는 JSON으로 변경 됨! 왜? @RestController 때문!
+        return new ArticleForm(entity);
+    }
+}
+```
+
+__⭐️ DTO__
+
+2)생성자 추가 : "dto/ArticleForm"
+
+````java
+import jdk.jfr.DataAmount;
+
+@Data
+public class ArticleForm {
+    private Long id // id 필드 추가!
+    
+    ...
+    
+    // 생성자 : entity 객체를 form 형태로 변환
+    public ArticleForm(Article entity){
+        this.id = entity.getId();
+        this.author = entity.getAuthor();
+        this.title = entity.getTitle();
+        this.content = entity.getContent();
+    }
+}
+````
 
 
 
