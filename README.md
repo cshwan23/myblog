@@ -703,9 +703,111 @@ INSERT INTO article(author, title, content) values ( '장영실','나랑 안맞�
 - delete : 레코드 삭제
 
 
+### 2. 데이터 조회(read)
 
+## 5) 목록 가져오기 
 
+## 미션
 
+게시글을 작성하고
 
+그 목록을 조회하시오.
 
+## 개념
 
+__⭐️ 진행 흐름__
+
+각 객체의 유기적 동작. 이를 통해 데이터 목록이 조회된다. 컨트롤러는 전체적인 요청을 받아 전체적 명령을,
+리파지토리는 DB에서 데이터를 가져오고, 모델은 뷰 페이지로 데이터를 전달한다. 전달된 데이터와 결합한 뷰 페이지.
+이는 클라이언트에서 결과 화면으로 나타난다.
+
+__⭐️ 모델__
+
+MVC 패턴 중 하나인 모델. 이는 뷰 페이지에서 사용할 데이터를 관리한다.
+
+```java
+// 데이터 articleList 저장! 뷰에서는 "articles"란 이름으로 사용 가능! 
+model.addAttributes('articles', articleList);
+```
+
+__⭐️ 머스태치 문법, 데이터 사용__
+
+머스태치를 사용하여, 모델 데이터를 사옹할 수 있다.
+
+```html
+<!-- 모델 데이터 aaa를 사용 -->
+{{#articles}}
+...
+{{/articles}}
+```
+
+## 튜토리얼
+
+__⭐️ 컨트롤러__
+
+1) 코드 추가 및 변경 : "controller/ArticleController"
+```java
+@Slf4j
+@RequiredArgsConstructor // final 필드 값을 알아서 가져옴! (@autowired 대체!)
+@Controller
+public class ArticleController {
+    
+    // 리파지토리 객체 자동 삽입 됨! 위에서 @RequiredArgsConstructor 했음!
+    private final ArticleRepository articleRepository;
+    
+    @GetMapping("/articles")
+    public String index(Model model) { // 뷰 페이지로 데이터 전달을 위한 Model 객체 자동 삽입 됨!
+        // 모든 Article을 가져옴
+        // Iterable 인터페이스는 ArrayList의 부모 인터페이스
+        Iterable<Article> articleList = articleRepository.findAll();
+        
+        // 뷰 페이지로 articles 전달!
+        model.addAttribute("articles", articleList);
+        
+        // 뷰 페이지 설정
+        return "articles/index";
+    }
+}
+```
+
+__⭐️ 뷰 페이지__
+
+2) 테이블 추가 : "articles/index.mustache"
+
+```html
+{{>layout/header}}
+<!-- jumbotron -->
+<div class="jumbotron">
+    <h1>Article 목록</h1>
+    <hr>
+    <p>articles/index.mustache</p>
+    <a href="/articles/new" class="btn btn-primary">글쓰기</a>
+</div>
+
+<!-- articles table -->
+<table class="table table=hover">
+    
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>제목</th>
+            <th>작성자</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- 모델에서 보내준 articles를 사용! 데이터가 여러개라면 반복 출력됨! -->
+        {{#articles}}
+        <tr>
+            <td>{{id}}</td><!-- id 출력 -->
+            <td>{{title}}</td><!-- title 출력 -->
+            <td>{{author}}</td><!-- author 출력 -->
+        </tr>
+        {{/articles}}
+    </tbody>
+</table>
+{{>layout/footer}}
+```
+
++ Iterable 인터페이스와 ArrayList 클래스의 관계?
+
+    Iterable 인터페이스는 ArrayList의 부모 인터페이스

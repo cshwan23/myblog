@@ -4,7 +4,28 @@
     <h1>Article 목록</h1>
     <hr>
     <p>articles/index.mustache</p>
-    <p>{{msg}}</p> <!--  모델 데이터를 가져 옴  -->
-    <button class="btn btn-primary" onclick="location.href='articles/new'">글쓰기</button>
+    <a href="/articles/new" class="btn btn-primary">글쓰기</a>
 </div>
+
+<!-- articles table -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>제목</th>
+            <th>작성자</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- 모델에서 보내준 articles를 사용! 데이터가 여러개라면 반복 출력 됨!-->
+        {{#articles}}
+            <tr>
+                <td>{{id}}</td> <!-- id 출력 -->
+                <td>{{title}}</td><!-- title 출력 -->
+                <td>{{author}}</td><!-- author 출력 -->
+            </tr>
+        {{/articles}}
+    </tbody>
+</table>
+
 {{>layouts/footer}}
