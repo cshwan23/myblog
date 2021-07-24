@@ -34,4 +34,10 @@ public class Article {
         this.title = title;
         this.content = content;
     }
+
+    public void rewrite(String author, String title, String content){
+        this.author = author;
+        this.title = title;
+        this.content = content;
+    }
 }

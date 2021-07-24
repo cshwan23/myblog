@@ -6,7 +6,7 @@ import lombok.Data;
 @Data // 생성자(디폴트,All), 게터, 세터, toString 등 다 만들어 줌!
 public class ArticleForm {
 
-//    private Long id;
+    private Long id;
     private String author;
     private String title;
     private String content;
@@ -15,7 +15,7 @@ public class ArticleForm {
     public Article toEntity() {
         return Article.builder().id(null).author(author).title(title).content(content).build();
     }
-//
+//    // 생성자: entity 객체를 form으로 변환!
 //    public ArticleForm(Article entity) {
 //        this.id = entity.getId();
 //        this.author = entity.getAuthor();

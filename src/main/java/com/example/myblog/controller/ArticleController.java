@@ -55,6 +55,12 @@ public class ArticleController {
         return "/articles/show";
 
     }
+    @GetMapping("/articles/edit/{id}")
+    public String edit(@PathVariable Long id, Model model){
+        Article target = articleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 Article이 없습니다."));
+        model.addAttribute("article",target);
+        return "articles/edit";
+    }
 
 
 }

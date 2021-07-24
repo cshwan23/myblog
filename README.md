@@ -1047,6 +1047,32 @@ public class ArticleForm {
 ````
 
 
+# 데이터 수정(update)
+
+## 8) 수정 폼(form 데이터 주고 받기)
+
+## 미션
+
+상세 페이지에서 수정 버튼을 클릭하여 수정 페이지가 나오게 하고,
+
+수정한 내용을 서버로 전달하시오. Ajax 사용할 것.
+
+## 개념
+
+__⭐️ 진행 흐름__
+
+먼저, 버튼을 클릭하면 데이터 수정 폼을 보여준다.
+
+1. 수정 버튼 클릭 -> /articles/edit/1 -> Controller -> Repository -> 
+
+2. Repository -> findById(id) -> Record 
+
+3. Record -> Entity -> Repository -> Controller
+
+4. Controller -> DTO -> Client 
+
+
+
 
 
 
